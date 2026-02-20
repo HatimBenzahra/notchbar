@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SpiderView: View {
 
-    var threadLength: CGFloat = 30
+    var crawlWidth: CGFloat = 120
 
     private let bodyRadius: CGFloat = 7
     private let headRadius: CGFloat = 5.5
@@ -10,43 +10,38 @@ struct SpiderView: View {
     private let pupilRadius: CGFloat = 1.4
     private let legLength: CGFloat = 10
     private let legStroke: CGFloat = 1.2
-    private let threadStroke: CGFloat = 0.6
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
             Canvas { context, size in
-                let anchorX = size.width / 2
-                let anchorY: CGFloat = 0
+                let centerY = size.height / 2
+                let margin: CGFloat = 20
 
-                let sway = sin(t * 0.8) * 6
-                let bob = sin(t * 1.3) * 2
+                let crawlRange = size.width - margin * 2
+                let phase = t * 0.3
+                let normalized = (sin(phase) + 1) / 2
+                let spiderX = margin + crawlRange * normalized
 
-                let spiderX = anchorX + sway
-                let spiderY = anchorY + threadLength + bob
+                let direction: CGFloat = cos(phase) > 0 ? 1 : -1
+                let bob = sin(t * 3.0) * 0.6
 
-                drawThread(context: context, from: CGPoint(x: anchorX, y: anchorY), to: CGPoint(x: spiderX, y: spiderY))
+                let bodyCenter = CGPoint(x: spiderX, y: centerY + bob)
+                let headCenter = CGPoint(
+                    x: spiderX + direction * (bodyRadius + headRadius * 0.5),
+                    y: centerY - 1 + bob
+                )
 
-                let bodyCenter = CGPoint(x: spiderX, y: spiderY + bodyRadius)
-                let headCenter = CGPoint(x: spiderX, y: spiderY - headRadius * 0.2)
-
-                drawLegs(context: context, center: bodyCenter, phase: t * 2.2)
+                let walkPhase = t * 6.0
+                drawLegs(context: context, center: bodyCenter, phase: walkPhase, direction: direction)
                 drawBody(context: context, center: bodyCenter)
                 drawHead(context: context, center: headCenter)
-                drawEyes(context: context, headCenter: headCenter, time: t)
-                drawMouth(context: context, headCenter: headCenter)
+                drawEyes(context: context, headCenter: headCenter, time: t, direction: direction)
+                drawMouth(context: context, headCenter: headCenter, direction: direction)
             }
         }
-        .frame(width: 50, height: threadLength + bodyRadius * 2 + headRadius * 2 + legLength + 8)
+        .frame(width: crawlWidth, height: bodyRadius * 2 + legLength * 2 + 6)
         .allowsHitTesting(false)
-    }
-
-    private func drawThread(context: GraphicsContext, from: CGPoint, to: CGPoint) {
-        var path = Path()
-        path.move(to: from)
-        let ctrl = CGPoint(x: (from.x + to.x) / 2 + (to.x - from.x) * 0.3, y: (from.y + to.y) / 2)
-        path.addQuadCurve(to: to, control: ctrl)
-        context.stroke(path, with: .color(.white.opacity(0.15)), lineWidth: threadStroke)
     }
 
     private func drawBody(context: GraphicsContext, center: CGPoint) {
@@ -73,7 +68,7 @@ struct SpiderView: View {
         context.stroke(headPath, with: .color(.white.opacity(0.22)), lineWidth: 0.6)
     }
 
-    private func drawEyes(context: GraphicsContext, headCenter: CGPoint, time: Double) {
+    private func drawEyes(context: GraphicsContext, headCenter: CGPoint, time: Double, direction: CGFloat) {
         let eyeSpacing: CGFloat = 3.2
         let eyeY = headCenter.y - 0.8
 
@@ -93,7 +88,7 @@ struct SpiderView: View {
             context.fill(eyePath, with: .color(.white.opacity(0.90)))
 
             if eyeScaleY > 0.5 {
-                let pupilOffsetX = sin(time * 0.6) * 0.6
+                let pupilOffsetX = direction * 0.8
                 let pupilRect = CGRect(
                     x: eyeX + pupilOffsetX - pupilRadius,
                     y: eyeY - pupilRadius * 0.8,
@@ -115,45 +110,47 @@ struct SpiderView: View {
         }
     }
 
-    private func drawMouth(context: GraphicsContext, headCenter: CGPoint) {
+    private func drawMouth(context: GraphicsContext, headCenter: CGPoint, direction: CGFloat) {
+        let mouthX = headCenter.x + direction * 1.5
         let mouthY = headCenter.y + headRadius * 0.45
         var path = Path()
-        path.move(to: CGPoint(x: headCenter.x - 1.8, y: mouthY))
+        path.move(to: CGPoint(x: mouthX - 1.8, y: mouthY))
         path.addQuadCurve(
-            to: CGPoint(x: headCenter.x + 1.8, y: mouthY),
-            control: CGPoint(x: headCenter.x, y: mouthY + 1.5)
+            to: CGPoint(x: mouthX + 1.8, y: mouthY),
+            control: CGPoint(x: mouthX, y: mouthY + 1.5)
         )
         context.stroke(path, with: .color(.white.opacity(0.35)), lineWidth: 0.6)
     }
 
-    private func drawLegs(context: GraphicsContext, center: CGPoint, phase: Double) {
-        let legConfigs: [(base: Double, sway: Double)] = [
-            (-0.9, 0.12), (-0.5, 0.15), (-0.15, 0.10), (0.2, 0.13),
-            (0.9, 0.12), (0.5, 0.15), (0.15, 0.10), (-0.2, 0.13)
-        ]
-
-        for (i, leg) in legConfigs.enumerated() {
+    private func drawLegs(context: GraphicsContext, center: CGPoint, phase: Double, direction: CGFloat) {
+        for i in 0..<8 {
             let side: CGFloat = i < 4 ? -1 : 1
-            let wiggle = sin(phase + Double(i) * 0.8) * leg.sway
+            let legIndex = i % 4
 
-            let startY = center.y - bodyRadius * 0.3 + CGFloat(i % 4) * 3.0
+            let stepPhase = phase + Double(legIndex) * .pi / 2
+            let stepLift = max(0, sin(stepPhase)) * 3.0
+            let stepReach = cos(stepPhase) * 3.0
+
+            let angles: [CGFloat] = [-0.6, -0.25, 0.15, 0.5]
+            let baseAngle = angles[legIndex]
+
+            let startY = center.y - bodyRadius * 0.2 + CGFloat(legIndex) * 2.8
             let start = CGPoint(x: center.x, y: startY)
 
-            let midAngle = leg.base + wiggle
             let mid = CGPoint(
-                x: start.x + side * legLength * 0.6 * cos(midAngle),
-                y: start.y + legLength * 0.5 * sin(midAngle + 0.4)
+                x: start.x + side * legLength * 0.6 + stepReach * side * 0.3,
+                y: start.y + legLength * 0.3 * baseAngle - stepLift * 0.5
             )
             let end = CGPoint(
-                x: mid.x + side * legLength * 0.5,
-                y: mid.y + legLength * 0.4
+                x: mid.x + side * legLength * 0.5 + stepReach * side * 0.2,
+                y: mid.y + legLength * 0.35 - stepLift * 0.3
             )
 
             var path = Path()
             path.move(to: start)
             path.addQuadCurve(to: mid, control: CGPoint(
                 x: (start.x + mid.x) / 2 + side * 2,
-                y: (start.y + mid.y) / 2 - 1
+                y: (start.y + mid.y) / 2 - 2
             ))
             path.addLine(to: end)
 
@@ -167,9 +164,9 @@ struct SpiderView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color.black
-            SpiderView(threadLength: 40)
+            SpiderView(crawlWidth: 200)
         }
-        .frame(width: 100, height: 120)
+        .frame(width: 250, height: 60)
     }
 }
 #endif

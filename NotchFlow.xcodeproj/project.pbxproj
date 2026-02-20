@@ -13,20 +13,28 @@
 		5113F591A4C57EE56804F5BA /* NotchShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93821A87392F12AC9DD22968 /* NotchShape.swift */; };
 		9E98B8BF41B93D5A80B75264 /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8184E1772AD2A23140A26E /* NotchPanel.swift */; };
 		A967DBE3231703FABAC3E28D /* NotchFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF5330F7F32D03689D80D89 /* NotchFlowApp.swift */; };
+		B63E4B05AC3B1A9F7B50FD50 /* ExpandedClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095A4057C1F96431587180D7 /* ExpandedClockView.swift */; };
+		BB1D5740D4FC0F89053579EE /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FE484010757509BC950A0A /* ThemeManager.swift */; };
+		DF4C864ACA231A78843AE630 /* CompactClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD125BB9AFD2929F25EBA11 /* CompactClockView.swift */; };
+		EB96717CEA75E2E8F7CCCEF4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DE56E4143101842E6E622C /* SettingsView.swift */; };
 		F28AA04269A0268DC0572BD0 /* NotchUIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F64C80117C76A8427AEBEE /* NotchUIStyle.swift */; };
-		E1A2B3C4D5E6F70891234567 /* SpiderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F607189ABCDEF0 /* SpiderView.swift */; };
+		F79601D69CD607CE35050B92 /* SpiderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A364D67E41248AA3DA7F013 /* SpiderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		07F64C80117C76A8427AEBEE /* NotchUIStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchUIStyle.swift; sourceTree = "<group>"; };
+		095A4057C1F96431587180D7 /* ExpandedClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedClockView.swift; sourceTree = "<group>"; };
+		1BD125BB9AFD2929F25EBA11 /* CompactClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactClockView.swift; sourceTree = "<group>"; };
+		28DE56E4143101842E6E622C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A8184E1772AD2A23140A26E /* NotchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanel.swift; sourceTree = "<group>"; };
 		2DF5330F7F32D03689D80D89 /* NotchFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchFlowApp.swift; sourceTree = "<group>"; };
 		352B35AC17115D81F7BB334A /* NotchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchRootView.swift; sourceTree = "<group>"; };
 		393958C1E6F001576E1EF642 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7A364D67E41248AA3DA7F013 /* SpiderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiderView.swift; sourceTree = "<group>"; };
 		93821A87392F12AC9DD22968 /* NotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShape.swift; sourceTree = "<group>"; };
 		A3DC519D55710CD5992A47A0 /* NotchFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NotchFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B76105DCFC8C9522BB76E735 /* NotchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchViewModel.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F607189ABCDEF0 /* SpiderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiderView.swift; sourceTree = "<group>"; };
+		F6FE484010757509BC950A0A /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -44,6 +52,7 @@
 				393958C1E6F001576E1EF642 /* AppDelegate.swift */,
 				2DF5330F7F32D03689D80D89 /* NotchFlowApp.swift */,
 				2A8184E1772AD2A23140A26E /* NotchPanel.swift */,
+				B9957A8FCB30CE6D1C345320 /* Models */,
 				CA7FE9B2958D53655DA204E1 /* ViewModels */,
 				A8AB94D436928EE8EACD78FB /* Views */,
 			);
@@ -58,16 +67,26 @@
 			path = NotchFlow;
 			sourceTree = "<group>";
 		};
-
 		A8AB94D436928EE8EACD78FB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1BD125BB9AFD2929F25EBA11 /* CompactClockView.swift */,
+				095A4057C1F96431587180D7 /* ExpandedClockView.swift */,
 				352B35AC17115D81F7BB334A /* NotchRootView.swift */,
 				93821A87392F12AC9DD22968 /* NotchShape.swift */,
 				07F64C80117C76A8427AEBEE /* NotchUIStyle.swift */,
-				A1B2C3D4E5F607189ABCDEF0 /* SpiderView.swift */,
+				28DE56E4143101842E6E622C /* SettingsView.swift */,
+				7A364D67E41248AA3DA7F013 /* SpiderView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B9957A8FCB30CE6D1C345320 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F6FE484010757509BC950A0A /* ThemeManager.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		CA7FE9B2958D53655DA204E1 /* ViewModels */ = {
@@ -146,13 +165,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DCA28DE22A7855531D6B6C4 /* AppDelegate.swift in Sources */,
+				DF4C864ACA231A78843AE630 /* CompactClockView.swift in Sources */,
+				B63E4B05AC3B1A9F7B50FD50 /* ExpandedClockView.swift in Sources */,
 				A967DBE3231703FABAC3E28D /* NotchFlowApp.swift in Sources */,
 				9E98B8BF41B93D5A80B75264 /* NotchPanel.swift in Sources */,
 				49A1D9D276929DD7F7B12AC6 /* NotchRootView.swift in Sources */,
 				5113F591A4C57EE56804F5BA /* NotchShape.swift in Sources */,
 				F28AA04269A0268DC0572BD0 /* NotchUIStyle.swift in Sources */,
 				0EEF01E96C742B42FB6278D1 /* NotchViewModel.swift in Sources */,
-				E1A2B3C4D5E6F70891234567 /* SpiderView.swift in Sources */,
+				EB96717CEA75E2E8F7CCCEF4 /* SettingsView.swift in Sources */,
+				F79601D69CD607CE35050B92 /* SpiderView.swift in Sources */,
+				BB1D5740D4FC0F89053579EE /* ThemeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

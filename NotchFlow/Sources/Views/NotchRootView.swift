@@ -1,12 +1,5 @@
 import SwiftUI
 
-private struct ContentSizeKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-        value = nextValue()
-    }
-}
-
 struct NotchRootView: View {
 
     @ObservedObject var viewModel: NotchViewModel
@@ -23,6 +16,7 @@ struct NotchRootView: View {
                     height: viewModel.currentHeight
                 )
                 .overlay { notchContent }
+                .clipped()
                 .onHover { hovering in
                     if hovering {
                         viewModel.cancelCollapse()
@@ -54,70 +48,67 @@ struct NotchRootView: View {
     private var compactContent: some View {
         HStack {
             Spacer()
-            Text(timeString)
-                .font(NotchType.compactTime)
-                .monospacedDigit()
-                .tracking(0.5)
-                .foregroundStyle(.white)
+            CompactClockView(
+                themeManager: viewModel.themeManager,
+                currentTime: currentTime
+            )
             Spacer()
         }
         .frame(height: viewModel.compactHeight)
     }
 
     private var expandedContent: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             VStack(spacing: 0) {
-                Spacer().frame(height: viewModel.compactHeight)
+                Spacer().frame(height: viewModel.compactHeight + 10)
 
                 Spacer()
 
-                VStack(spacing: 4) {
-                    Text(timeString)
-                        .font(NotchType.heroLarge)
-                        .monospacedDigit()
-                        .tracking(-1.5)
-                        .foregroundStyle(.white)
-
-                    Text(dateString.uppercased())
-                        .font(NotchType.caption)
-                        .tracking(1.8)
-                        .foregroundStyle(NotchTheme.textSecondary)
-                }
-                .background(
-                    GeometryReader { geo in
-                        Color.clear.preference(
-                            key: ContentSizeKey.self,
-                            value: geo.size
+                if viewModel.showSettings {
+                    SettingsView(
+                        themeManager: viewModel.themeManager,
+                        showSettings: $viewModel.showSettings
+                    )
+                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                } else {
+                    VStack(spacing: 4) {
+                        ExpandedClockView(
+                            themeManager: viewModel.themeManager,
+                            currentTime: currentTime
                         )
+
+                        SpiderView(crawlWidth: viewModel.currentWidth * 0.35)
+                            .opacity(0.85)
                     }
-                )
+                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                }
+
+                Spacer().frame(minHeight: 24)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.horizontal, 44)
+
+            VStack {
+                HStack {
+                    Spacer()
+                    SettingsToggleButton(
+                        showSettings: $viewModel.showSettings,
+                        themeManager: viewModel.themeManager
+                    )
+                }
+                .padding(.top, viewModel.compactHeight + 4)
+                .padding(.horizontal, 50)
 
                 Spacer()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            SpiderView(threadLength: 28)
-                .padding(.top, viewModel.compactHeight + 2)
-                .padding(.trailing, 30)
-                .opacity(0.85)
         }
-        .onPreferenceChange(ContentSizeKey.self) { size in
+        .onPreferenceChange(ClockContentSizeKey.self) { size in
             viewModel.updateContentSize(size)
         }
-    }
-
-    private var timeString: String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm"
-        return f.string(from: currentTime)
-    }
-
-    private var dateString: String {
-        let f = DateFormatter()
-        f.dateFormat = "EEE d MMM"
-        return f.string(from: currentTime)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.showSettings)
     }
 }
+
 #if DEBUG
 struct NotchRootView_Previews: PreviewProvider {
     static var previews: some View {

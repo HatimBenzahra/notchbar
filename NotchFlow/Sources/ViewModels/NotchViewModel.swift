@@ -11,13 +11,16 @@ final class NotchViewModel: ObservableObject {
     @Published var state: NotchState = .compact
     @Published var contentWidth: CGFloat = 0
     @Published var contentHeight: CGFloat = 0
+    @Published var showSettings: Bool = false
+
+    let themeManager = ThemeManager()
 
     private var collapseTimer: Timer?
 
     let openAnimation: Animation = .spring(.bouncy(duration: 0.4))
     let closeAnimation: Animation = .smooth(duration: 0.4)
 
-    private static let expandedPadding: CGFloat = 40
+    private static let expandedPadding: CGFloat = 70
 
     var compactWidth: CGFloat {
         let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 })
@@ -42,7 +45,7 @@ final class NotchViewModel: ObservableObject {
     }
 
     var expandedHeight: CGFloat {
-        let minHeight = compactHeight + 60
+        let minHeight = compactHeight + 180
         let contentBased = contentHeight + compactHeight + Self.expandedPadding
         return max(minHeight, contentBased)
     }
